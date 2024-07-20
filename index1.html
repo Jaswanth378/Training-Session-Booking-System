@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Training Sessions</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2196F3;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 48px;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        h2 {
+            margin-top: 40px;
+            margin-bottom: 10px;
+            color: #2196F3;
+            text-align: center;
+        }
+
+        table {
+            width: auto;
+            text-align: center;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #2196F3;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .error {
+            color: #F44336;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .success {
+            color: #4CAF50;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .booking-container {
+            max-width: 500px;
+            margin: 50px auto 0;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            margin-top: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2196F3;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            background-color: #2196F3;
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2196F3;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Training Sessions</h1>
+
+    <?php if (!empty($workshopTableRows)): ?>
+    <h2>Workshops</h2>
+    <table>
+        <tr>
+            <th>Workshop Title</th>
+            <th>Description</th>
+            <th>Timings</th>
+            <th>Max Capacity</th>
+        </tr>
+        <?php echo $workshopTableRows; ?>
+    </table>
+    <?php else: ?>
+    <div class="message">No workshops left. All topics are fully booked.</div>
+    <?php endif; ?>
+
+    <?php if ($remainingSlots <= 0): ?>
+    <div class="error">All sessions are full. No more bookings can be made.</div>
+    <?php else: ?>
+    <div class="booking-container">
+        <h2>Session Booking</h2>
+
+        <?php if (!empty($successMessage)): ?>
+        <div class="success">
+            <?php echo $successMessage; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($errorMessage)): ?>
+        <div class="error">
+            <?php echo $errorMessage; ?>
+        </div>
+        <?php endif; ?>
+
+        <form action="training.php" method="post" id="bookingForm">
+            <label for="topic">Topic:</label>
+            <select id="topic" name="topic" onchange="this.form.submit()" required>
+                <option value="" selected disabled>Select a workshop you want to attend!</option>
+                <?php foreach ($workshopData as $workshop): ?>
+                <?php if (hasAvailableSlots($workshop['topic'], $conn)): ?>
+                <option value="<?php echo $workshop['topic']; ?>" <?php if ($workshop['topic']==$selectedTopic)
+                    echo 'selected' ; ?>>
+                    <?php echo $workshop['topic']; ?>
+                </option>
+                <?php endif; ?>
+                <?php endforeach; ?>
+            </select>
+
+            <label for="slot">Slot:</label>
+            <select id="slot" name="slot" required>
+                <option value="" selected disabled>Select a slot timing for which you want to attend!</option>
+                <?php echo $slotOptions; ?>
+            </select>
+
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <input type="submit" name="bookSession" value="Submit">
+        </form>
+    </div>
+    <?php endif; ?>
+
+    <?php if (!empty($bookingTableRows)): ?>
+    <h2>Booking Information</h2>
+    <table>
+        <tr>
+            <th>Topic/Workshop Title</th>
+            <th>Timings</th>
+            <th>Name</th>
+            <th>Email ID</th>
+        </tr>
+        <?php echo $bookingTableRows; ?>
+    </table>
+    <?php else: ?>
+    <div class="error">No bookings yet.</div>
+    <?php endif; ?>
+</body>
+
+</html>
