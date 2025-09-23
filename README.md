@@ -9,7 +9,7 @@ This system allows users to book training sessions on various topics. It's built
 - Prevent overbooking by tracking available slots
 - Display booking information for all registered sessions
 
-## Setup
+## SetUp
 
 1. Ensure you have PHP and MySQL installed on your server.
 2. Create a MySQL database named "Training".
